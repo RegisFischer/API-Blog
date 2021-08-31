@@ -6,7 +6,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\ArticleRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Validator\Constraints\DateTime;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * NormalizationContext permet de faire la serialization dans API
@@ -16,7 +16,10 @@ use Symfony\Component\Validator\Constraints\DateTime;
  * @ApiResource(
  *     normalizationContext={"groups"="read:Article:collection"},
  *     denormalizationContext={"groups"="write:Article"},
- *     collectionOperations={"get","post"}
+ *     collectionOperations={
+ *              "get",
+ *              "post"={"validation_groups"={"write:Article"}}
+ * },
  *     itemOperations={
  *                  "put",
  *                  "delete",
@@ -44,6 +47,8 @@ class Article
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"read:Article:collection","write:Article"})
+     * @Assert\NotNull
+     * @Assert\Length(min=2,max=50,groups={"write:Article"})
      */
     private $title;
 
